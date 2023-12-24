@@ -16,14 +16,12 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
-          chmod 600 ~/.ssh/config
+          chmod 600 ~/.ssh/config      
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -t rsa localhost >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts      
+          chmod 600 ~/.ssh/id_rsa               
       - name: Copy files to server
         run: |
           pwd
