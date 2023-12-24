@@ -1,4 +1,4 @@
-name: Deploy and run
+name: Build and Deploy
 
 on:
   push:
@@ -11,21 +11,23 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2     
       - name: Disable Host Key Verification
         run: |
           mkdir -p ~/.ssh
           echo "StrictHostKeyChecking no" >> ~/.ssh/config
-          chmod 600 ~/.ssh/config      
-      - name: Setup SSH
+          chmod 600 ~/.ssh/config
+      - name: Configure SSH environment
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa               
-      - name: Copy files to server
+          chmod 600 ~/.ssh/id_rsa
+      - name: Deploy to remote machine
         run: |
           pwd
           ls -l
+          # Replace remote-user and remote-host with your SSH credentials         
           scp -r $GITHUB_WORKSPACE/* github@195.35.23.133:/opt/pdfpython/app
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
