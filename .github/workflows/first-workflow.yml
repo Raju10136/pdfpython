@@ -1,0 +1,28 @@
+name: Deploy and run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa localhost >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts      
+      - name: Copy files to server
+        run: |
+          pwd
+          ls -l
+          scp -r $GITHUB_WORKSPACE/* github@195.35.23.133:/opt/pdfpython/app
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
