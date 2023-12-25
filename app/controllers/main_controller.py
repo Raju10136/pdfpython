@@ -6,7 +6,7 @@ from app.exceptions.custom_exceptions import CustomException
 
 main_blueprint = Blueprint("main", __name__)
 
-@main_blueprint.route("/main/get_data", methods=["GET"])
+@main_blueprint.route("/api/main/get_data", methods=["GET"])
 def get_data_route():
     try:
         data = get_data()
@@ -14,7 +14,7 @@ def get_data_route():
     except CustomException as e:
         return error_response(str(e), e.status_code)
 
-@main_blueprint.route("/update_data", methods=["PUT"])
+@main_blueprint.route("/api/update_data", methods=["PUT"])
 def update_data_route():
     try:
         # Assuming JSON payload with an "update" field
