@@ -33,7 +33,7 @@ jobs:
       - name: testing
         uses: appleboy/ssh-action@master
         with:
-          host: 134.209.232.225
+          host: 195.35.23.133
           username: github
           port: 22
           key: ${{ secrets.SSH_PRIVATE_KEY }}
