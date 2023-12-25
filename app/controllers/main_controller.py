@@ -6,7 +6,6 @@ from app.exceptions.custom_exceptions import CustomException
 
 main_blueprint = Blueprint("main", __name__)
 
-
 @main_blueprint.route("/api/main/get_data", methods=["GET"])
 def get_data_route():
     try:
