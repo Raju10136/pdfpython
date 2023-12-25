@@ -40,4 +40,4 @@ jobs:
           passphrase: ''
           script: |
             cd /opt/pdfpython/app
-            pm2 reload all
+            pm2 reload run
