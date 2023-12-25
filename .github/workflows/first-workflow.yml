@@ -30,4 +30,14 @@ jobs:
           ls -l
           # Replace remote-user and remote-host with your SSH credentials         
           scp -r $GITHUB_WORKSPACE/* github@195.35.23.133:/opt/pdfpython/app
-
+      - name: testing
+        uses: appleboy/ssh-action@master
+        with:
+          host: 134.209.232.225
+          username: github
+          port: 22
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ''
+          script: |
+            cd /opt/pdfpython/app
+            pm2 reload all

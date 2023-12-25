@@ -2,8 +2,12 @@ from app.exceptions.custom_exceptions import CustomException
 
 # In-memory data store (replace this with a database in a real-world scenario)
 data_store = {"example_key": "example_value"}
+data_store_new = {"example_ttt": "example_zzz"}
 
 def get_data():
+    return data_store
+
+def get_data_new():
     return data_store
 
 def update_data(update_value):
