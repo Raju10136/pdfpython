@@ -5,7 +5,7 @@ data_store = {"example_key": "example_value"}
 data_store_new = {"example_ttt_raj": "example_zzz_junnu"}
 
 def get_data():
-    return data_store
+    return data_store_new
 
 def get_data_new():
     return data_store
