@@ -16,7 +16,7 @@ def update_data(update_value):
             raise CustomException("Key not found in data store", status_code=404)
 
         # Update the data
-        data_store["example_key"] = update_value
+        data_store_new["example_key"] = update_value
         return data_store
     except Exception as e:
         raise CustomException(str(e))
