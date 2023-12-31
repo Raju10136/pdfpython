@@ -8,7 +8,7 @@ def get_data():
     return data_store_new
 
 def get_data_new():
-    return data_store
+    return data_store_new
 
 def update_data(update_value):
     try:
