@@ -21,4 +21,6 @@ def handle_error(error):
 
 # Import and register routes/controllers
 from app.controllers.main_controller import main_blueprint
-app.register_blueprint(main_blueprint)
+from app.controllers.pdf_controller import pdf_blueprint
+app.register_blueprint(main_blueprint,url_prefix='/api/main')
+app.register_blueprint(pdf_blueprint,url_prefix='/api/pdf')
