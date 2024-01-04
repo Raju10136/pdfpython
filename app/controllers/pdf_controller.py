@@ -4,7 +4,8 @@ from app.utils.response_utils import success_response, error_response
 from app.services.data_service import get_data,get_data_new,update_data
 from app.exceptions.custom_exceptions import CustomException
 from app.services.filestorage_service import store_file_base64_array,retrieve_pdf_content
-from app.services.pdftools_service import merge_pdfs,gs_compress,overlay_pdf_with_start_page
+from app.services.pdftools_service import merge_pdfs,gs_compress,overlay_pdf_with_start_page,generate_watermark_pdf,add_watermark,convert_html_pdf
+from app.services.encryption_service import base_64_decode
 import base64
 
 pdf_blueprint = Blueprint("pdf", __name__)
@@ -41,6 +42,33 @@ def compress_pdf():
     except CustomException as e:
         print("error ", e)
         return error_response(str(e), e.status_code)
+    
+   
+@pdf_blueprint.route("/watermark_pdf", methods=["POST"])
+def watermark_pdf():
+    try:
+        input_payload = request.json.get('pdf_data')
+        water_mark_text =  request.json.get('water_mark_text')
+        #print("input payrload data = ",input_payload)
+        # save the file to system
+        print(" input received ")
+        input_dir = DATA + "/watermark"
+        files_array = store_file_base64_array(input_payload,input_dir) 
+        print("need to water mark the pdf ")
+        water_mark_pdf =  input_dir + "/watermark.pdf"
+        generate_watermark_pdf(water_mark_text,water_mark_pdf)
+        print("water mark done")
+        # after water mark is generated then genrate overlay
+        output_file = input_dir + "/output.pdf"
+        add_watermark(files_array[0],output_file,water_mark_pdf)
+        print("adding water mark ")
+        pdf_content = retrieve_pdf_content(output_file)
+        encoded_output = base64.b64encode(pdf_content).decode("utf-8")       
+        return success_response(encoded_output)
+    except CustomException as e:
+        print("error ", e)
+        return error_response(str(e), e.status_code)
+    
     
 @pdf_blueprint.route("/overlay_pdf", methods=["POST"])
 def overlay_pdf():
@@ -90,4 +118,22 @@ def get_pdf():
     except Exception as e:
         # Handle any errors
         print("error",str(e))
+        return error_response(str(e), e.status_code)
+    
+@pdf_blueprint.route("/html_to_pdf", methods=["POST"])
+def html_to_pdf():
+    try:
+        input_payload = request.json.get('html_data')
+        html_content = base_64_decode(input_payload[0])
+        print("html decoded " , html_content)
+        #print("input payrload data = ",merge_payload)
+        input_dir = DATA + "/htmltopdf"      
+        output_file = input_dir + "/output.pdf"
+        convert_html_pdf(html_content,output_file)
+        print("conversion over")
+        pdf_content = retrieve_pdf_content(output_file)
+        encoded_output = base64.b64encode(pdf_content).decode("utf-8")       
+        return success_response(encoded_output)
+    except CustomException as e:
+        print("error ", e)
         return error_response(str(e), e.status_code)

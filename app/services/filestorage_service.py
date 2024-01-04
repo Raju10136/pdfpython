@@ -28,6 +28,13 @@ def create_directory_from_file_path(file_path):
     if not os.path.exists(directory_path):
         os.makedirs(directory_path)
 
+def store_html(html_content,file_location):
+    # create a direcoty if not existed
+    create_directory_from_file_path(file_location)
+    # create a file 
+    # Save binary data to a PDF file
+    with open(file_location, 'w') as f:
+        f.write(html_content)
 
 def store_file(binary_data,file_location):
     # create a direcoty if not existed

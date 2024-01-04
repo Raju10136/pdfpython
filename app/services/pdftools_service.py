@@ -1,22 +1,29 @@
 from pikepdf import Pdf, Page, Rectangle
 import os
 import subprocess
+import pdfkit
+# this is to generate water mark pdf with single page
+from reportlab.pdfgen import canvas
 
-def generate_watermark_pdf(watermark_text, output_pdf):  
-    c = canvas.Canvas(output_pdf)
-    c.setFontSize(40)   
-    c.setFillColorRGB(0.7, 0.7, 0.7)
-    c.rotate(45)
-    c.drawString(180, 50, watermark_text)
-    c.save()
-
+# this is to generate water mark pdf with single page
+def generate_watermark_pdf(watermark_text, output_pdf):
+    try: 
+        c = canvas.Canvas(output_pdf)
+        c.setFontSize(40)   
+        c.setFillColorRGB(0.7, 0.7, 0.7)
+        c.rotate(45)
+        c.drawString(180, 50, watermark_text)
+        c.save()
+    except Exception as e:
+        print("water mark error " , e)
+# merge pdfs
 def merge_pdfs(input_files,output_file):
     pdf = Pdf.new()
     for fileName in input_files:
         src = Pdf.open(fileName)
         pdf.pages.extend(src.pages)
     pdf.save(output_file)
-
+# add single before 
 def add_string_before_extension_os(file_path, new_string):
     # Split the path into directory and filename parts
     directory, filename = os.path.split(file_path)
@@ -81,7 +88,7 @@ def overlay_pdf_with_start_page(input,overlay,output,start_page):
     except  Exception as e:
         print(f"Error executing overlay command: {e}")
 
-# adding water mark
+# adding water mark to the pdf with text
 def add_watermark(input_pdf, output_pdf, watermark_pdf):
     # Open the original PDF
     with Pdf.open(input_pdf) as pdf:
@@ -93,3 +100,10 @@ def add_watermark(input_pdf, output_pdf, watermark_pdf):
             destination_page.add_underlay(thumbnail, Rectangle(0, 0, 590, 800))
         # Save the watermarked PDF to a new file
         pdf.save(output_pdf)
+
+# add html to pdf 
+def convert_html_pdf(html_content,pdf_location):
+    try:
+        pdfkit.from_string(html_content, pdf_location)
+    except Exception as e:
+        print("conversion error " , e) 
