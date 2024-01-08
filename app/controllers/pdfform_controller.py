@@ -6,11 +6,10 @@ from app.exceptions.custom_exceptions import CustomException
 from app.services.filestorage_service import store_file_base64_array,retrieve_pdf_content
 from app.services.pdfform_service import read_pdf_form_fields,fill_form_fields
 from app.services.encryption_service import base_64_decode
-import base64
-import PyPDF2
+
 
 pdfform_blueprint = Blueprint("pdfform", __name__)
-DATA="D:/data/pdfdata"
+DATA="E:/test/data/pdfdata"
 
 @pdfform_blueprint.route("/get_fields", methods=["POST"])
 def get_fields():

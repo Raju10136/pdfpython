@@ -24,7 +24,8 @@ def read_pdf_form_fields(pdf_path):
             pdf_reader = PdfReader(pdf_file)
             
             for page_num in range(len(pdf_reader.pages)):
-                page_info = {'page_number': page_num + 1, 'fields': []}
+                #page_info = {'page_number': page_num + 1, 'fields': []}
+                page_fileds =[]
                 page = pdf_reader.pages[page_num]
                 annotations = page.get('/Annots')                
                 if annotations:
@@ -34,22 +35,31 @@ def read_pdf_form_fields(pdf_path):
                         field_value = field_dict.get('/V')
                         field_rect = field_dict.get('/Rect')
                         field_type = field_dict.get('/FT', 'Unknown Type')
-                        
+                        field_left = field_rect[0]
+                        field_top =  field_rect[1]
+                        field_right = field_rect[2]
+                        field_bottom =  field_rect[3]
+                        width =  field_right -  field_left
+                        height = field_bottom - field_top
                         if field_name:
                             field_info = {
-                                'filed_stype' : field_dict.get('/Subtype'),
-                                'field_name': field_name,
-                                'field_value': field_value,
-                                'field_rect': field_rect,
-                                'filed_type':field_type
+                                'stype' : field_dict.get('/Subtype'),
+                                'name': field_name,
+                                'value': field_value,
+                                'rect': field_rect,
+                                'type':field_type,
+                                'left':field_left,
+                                'top':841-field_bottom,
+                                'width':width,
+                                'height':height
                             }
-                            page_info['fields'].append(field_info)
+                            page_fileds.append(field_info)
                             #print(f"Page {page_num + 1}:")
                             #print(f"  Field Name: {field_name}")
                             #print(f"  Field Value: {field_value}")
                             #print(f"  Position: {field_rect}")
                             #print()
-                form_field_info.append(page_info)
+                form_field_info.append(page_fileds)
 
     except Exception as e:
         print(f"Error: {str(e)}")
