@@ -4,9 +4,10 @@ import subprocess
 import pdfkit
 # this is to generate water mark pdf with single page
 from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 import PyPDF2
 from PyPDF2 import PdfReader, PdfWriter
-
+import io
 
 def read_pdf_form_fields_old(pdf_path):
     try:
@@ -88,33 +89,44 @@ def generate_template_pdf(src_loc,page_fields,dest_loc):
     try:
          reader = PdfReader(src_loc)
          writer = PdfWriter()
-         print("page writer name as target ")
+         #print("page writer name as target ")
          for page_num in range(len(reader.pages)):
              page = reader.pages[page_num]
-             print("enteerd in page number " , page_num)       
+             packet = io.BytesIO()
+             c = canvas.Canvas(packet, pagesize=letter)
+             c.drawString(0, 0, "")
+             #pdf_writer = PdfWriter()
+             #pdf_writer.add_page(page)
+             #print("enteerd in page number " , page_num)       
              if 0 <= page_num < len(page_fields):
                 fields = page_fields[page_num]
                 for obj in fields:    
                     value = obj['value']
                     name = obj['name']
-                    print("name of the filed and value of the field " , name ,  " V = " , value)
-                    if(value=="newsoft"):
-                        print("entered  in pdf page adding a document")
-                        llx = 100
-                        lly = 150
-                        urx = 200
-                        ury = 500
-                         # Create a new text field
-                        text_field = PyPDF2.pdf.GenericTextObject.createBlankFrom(page, fieldType='/Tx') 
-                        text_field.update({
-                             PyPDF2.generic.createStringObject('/T'):
-                             PyPDF2.generic.createStringObject("test"),
-                             PyPDF2.generic.createStringObject('/V'): PyPDF2.generic.createStringObject(value),
-                             PyPDF2.generic.createStringObject('/Rect'): PyPDF2.generic.createArrayObject(
-                            [llx, lly, urx, ury])})
-                        page[PyPDF2.generic.NameObject("/Annots")].append(text_field)
-                #value= obj['value']   
-             writer.add_page(page)      
+                    if value=="newsoft":
+                       print("entering in page class of objects ")
+                       left = int(float(obj['left']))
+                       height = int(float(obj['height']))
+                       top = 841 - height - int(float(obj['top']))
+                       width = int(float(obj['width']))
+                       print("top specified is " , top)
+                        # Create a canvas for drawing on the first page
+                       #llx = 100
+                       #lly = 350
+                       #urx = 200
+                       #ury = 500                    
+                       # Create a text field
+                       c.acroForm.textfield(name=name, x=left, y=top, width=width, height=height) 
+                #value= obj['value']
+             #print("Fields Loop out")   
+             c.save()
+             packet.seek(0)
+             #print("asigning the canvas to new pdf")
+             new_pdf = PdfReader(packet)
+             #print("merging the canvas first page to page length = " , len(new_pdf.pages))
+             page.merge_page(new_pdf.pages[0])
+             #print("adding to writer that page")
+             writer.add_page(page)                   
     # write "output" to PyPDF2-output.pdf
          with open(dest_loc, "wb") as output_stream:
             writer.write(output_stream)
