@@ -104,19 +104,21 @@ def generate_template_pdf(src_loc,page_fields,dest_loc):
                     value = obj['value']
                     name = obj['name']
                     if value=="newsoft":
-                       print("entering in page class of objects ")
+                       #print("entering in page class of objects ")
                        left = int(float(obj['left']))
                        height = int(float(obj['height']))
                        top = 841 - height - int(float(obj['top']))
                        width = int(float(obj['width']))
-                       print("top specified is " , top)
+                       #print("top specified is " , top)
                         # Create a canvas for drawing on the first page
                        #llx = 100
                        #lly = 350
                        #urx = 200
                        #ury = 500                    
                        # Create a text field
-                       c.acroForm.textfield(name=name, x=left, y=top, width=width, height=height) 
+                       c.acroForm.textfield(name=name, x=left, y=top, width=width, 
+                                            height=height,borderWidth=0, fontSize=10,
+                                            fillColor=None) 
                 #value= obj['value']
              #print("Fields Loop out")   
              c.save()
