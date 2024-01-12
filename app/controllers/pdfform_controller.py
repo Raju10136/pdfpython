@@ -6,7 +6,7 @@ from app.exceptions.custom_exceptions import CustomException
 from app.services.filestorage_service import store_file_base64_array,retrieve_pdf_content
 from app.services.pdfform_service import read_pdf_form_fields,fill_form_fields,generate_template_pdf
 from app.services.encryption_service import base_64_decode
-
+import base64
 
 pdfform_blueprint = Blueprint("pdfform", __name__)
 DATA="E:/test/data/pdfdata"
@@ -37,8 +37,10 @@ def generate_template():
         print("got the fields")
         output_loc = input_dir + "/output.pdf"
         print("try creating generate pdf")
-        generate_template_pdf(out_array[0],fields,output_loc)          
-        return success_response(fields)
+        generate_template_pdf(out_array[0],fields,output_loc)
+        pdf_content = retrieve_pdf_content(output_loc)
+        encoded_output = base64.b64encode(pdf_content).decode("utf-8")            
+        return success_response(encoded_output)
     except CustomException as e:
         print("error ", e)
         return error_response(str(e), e.status_code)

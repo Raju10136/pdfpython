@@ -5,6 +5,7 @@ import pdfkit
 # this is to generate water mark pdf with single page
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.colors import white
 import PyPDF2
 from PyPDF2 import PdfReader, PdfWriter
 import io
@@ -104,21 +105,27 @@ def generate_template_pdf(src_loc,page_fields,dest_loc):
                     value = obj['value']
                     name = obj['name']
                     if value=="newsoft":
+                       media_box = page.mediabox
+                       page_height = media_box.upper_right[1] - media_box.lower_left[1]
                        #print("entering in page class of objects ")
                        left = int(float(obj['left']))
                        height = int(float(obj['height']))
-                       top = 841 - height - int(float(obj['top']))
+                       top = page_height - height - int(float(obj['top']))
                        width = int(float(obj['width']))
+                       type = obj['type']
                        #print("top specified is " , top)
-                        # Create a canvas for drawing on the first page
+                       # Create a canvas for drawing on the first page
                        #llx = 100
                        #lly = 350
                        #urx = 200
                        #ury = 500                    
                        # Create a text field
-                       c.acroForm.textfield(name=name, x=left, y=top, width=width, 
+                       if type=="checkbox":
+                            c.acroForm.checkbox(name=name,x=left,y=top)
+                       else :
+                           c.acroForm.textfield(name=name, x=left, y=top, width=width, 
                                             height=height,borderWidth=0, fontSize=10,
-                                            fillColor=None) 
+                                            fillColor=white) 
                 #value= obj['value']
              #print("Fields Loop out")   
              c.save()
