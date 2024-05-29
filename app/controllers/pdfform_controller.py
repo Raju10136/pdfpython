@@ -71,4 +71,25 @@ def fill_fields():
     except CustomException as e:
         print("error ", e)
         return error_response(str(e), e.status_code)
+    
+@pdfform_blueprint.route("/extract_data", methods=["POST"])
+def extract_data():
+    try:
+        #print("testing input template")
+        payload = request.json.get('template')      
+        input_dir = DATA + "/pdfextract"
+        #print("pdf storage ")
+        out_array = store_file_base64_array([payload],input_dir)      
+        #print("enterering in read")
+        fields = request.json.get('fields') 
+        print("got the fields ", fields )
+        #output_loc = input_dir + "/output.pdf"
+        #print("try creating generate pdf")
+        #generate_template_pdf(out_array[0],fields,output_loc)
+        #pdf_content = retrieve_pdf_content(output_loc)
+        #encoded_output = base64.b64encode(pdf_content).decode("utf-8")            
+        return success_response("sorting")
+    except CustomException as e:
+        print("error ", e)
+        return error_response(str(e), e.status_code)
 

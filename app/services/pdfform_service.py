@@ -142,3 +142,60 @@ def generate_template_pdf(src_loc,page_fields,dest_loc):
     except Exception as e:
         print(f"Error: {str(e)}")
 
+
+def extract_data(src_loc,page_fields,dest_loc):
+    try:
+         reader = PdfReader(src_loc)
+         #writer = PdfWriter()
+         #print("page writer name as target ")
+         for page_num in range(len(reader.pages)):
+             page = reader.pages[page_num]
+             packet = io.BytesIO()
+             c = canvas.Canvas(packet, pagesize=letter)
+             c.drawString(0, 0, "")
+             #pdf_writer = PdfWriter()
+             #pdf_writer.add_page(page)
+             #print("enteerd in page number " , page_num)       
+             if 0 <= page_num < len(page_fields):
+                fields = page_fields[page_num]
+                for obj in fields:    
+                    value = obj['value']
+                    name = obj['name']
+                    if value=="newsoft":
+                       media_box = page.mediabox
+                       page_height = media_box.upper_right[1] - media_box.lower_left[1]
+                       #print("entering in page class of objects ")
+                       left = int(float(obj['left']))
+                       height = int(float(obj['height']))
+                       top = page_height - height - int(float(obj['top']))
+                       width = int(float(obj['width']))
+                       type = obj['type']
+                       #print("top specified is " , top)
+                       # Create a canvas for drawing on the first page
+                       #llx = 100
+                       #lly = 350
+                       #urx = 200
+                       #ury = 500                    
+                       # Create a text field
+                       if type=="checkbox":
+                            c.acroForm.checkbox(name=name,x=left,y=top)
+                       else :
+                           c.acroForm.textfield(name=name, x=left, y=top, width=width, 
+                                            height=height,borderWidth=0, fontSize=10,
+                                            fillColor=white) 
+                #value= obj['value']
+             #print("Fields Loop out")   
+             c.save()
+             packet.seek(0)
+             #print("asigning the canvas to new pdf")
+             new_pdf = PdfReader(packet)
+             #print("merging the canvas first page to page length = " , len(new_pdf.pages))
+             page.merge_page(new_pdf.pages[0])
+             #print("adding to writer that page")
+             writer.add_page(page)                   
+    # write "output" to PyPDF2-output.pdf
+         with open(dest_loc, "wb") as output_stream:
+            writer.write(output_stream)
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
