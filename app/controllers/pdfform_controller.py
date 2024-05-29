@@ -4,12 +4,12 @@ from app.utils.response_utils import success_response, error_response
 from app.services.data_service import get_data,get_data_new,update_data
 from app.exceptions.custom_exceptions import CustomException
 from app.services.filestorage_service import store_file_base64_array,retrieve_pdf_content
-from app.services.pdfform_service import read_pdf_form_fields,fill_form_fields,generate_template_pdf
+from app.services.pdfform_service import read_pdf_form_fields,fill_form_fields,generate_template_pdf,extract_data_pdf
 from app.services.encryption_service import base_64_decode
 import base64
 
 pdfform_blueprint = Blueprint("pdfform", __name__)
-DATA="E:/test/data/pdfdata"
+DATA="/data/pdfdata"
 
 @pdfform_blueprint.route("/get_fields", methods=["POST"])
 def get_fields():
@@ -83,12 +83,12 @@ def extract_data():
         #print("enterering in read")
         fields = request.json.get('fields') 
         print("got the fields ", fields )
-        #output_loc = input_dir + "/output.pdf"
+        data = extract_data_pdf(out_array[0],fields,input_dir)
         #print("try creating generate pdf")
         #generate_template_pdf(out_array[0],fields,output_loc)
         #pdf_content = retrieve_pdf_content(output_loc)
         #encoded_output = base64.b64encode(pdf_content).decode("utf-8")            
-        return success_response("sorting")
+        return success_response(data)
     except CustomException as e:
         print("error ", e)
         return error_response(str(e), e.status_code)

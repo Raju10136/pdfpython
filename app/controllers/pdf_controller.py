@@ -9,7 +9,7 @@ from app.services.encryption_service import base_64_decode
 import base64
 
 pdf_blueprint = Blueprint("pdf", __name__)
-DATA="D:/data/pdfdata"
+DATA="data/pdfdata"
 
 @pdf_blueprint.route("/merge_pdf", methods=["POST"])
 def merge_pdf():
