@@ -1,6 +1,8 @@
 from pdf2image import convert_from_path
 from PIL import Image
 import pytesseract
+import base64
+from io import BytesIO
 
 def convert_pdf_page_to_image(pdf_path, page_number):
     # Convert the specified page to an image
@@ -11,6 +13,12 @@ def crop_image(image, crop_box):
     # Crop the image based on the provided box
     cropped_image = image.crop(crop_box)
     return cropped_image
+
+def image_to_base64(image):
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    img_str = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    return img_str
 
 def save_image(image, output_path):
     # Save the image to the specified path

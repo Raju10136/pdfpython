@@ -8,7 +8,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.colors import white
 import PyPDF2
 from PyPDF2 import PdfReader, PdfWriter
-from app.services.image_service import convert_pdf_page_to_image,crop_image,save_image,crop_box_calculation,extract_text_from_image
+from app.services.image_service import convert_pdf_page_to_image,crop_image,save_image,crop_box_calculation,extract_text_from_image,image_to_base64
 import io
 
 
@@ -163,11 +163,15 @@ def extract_data_pdf(src_loc,page_fields,dest_loc):
                     crop_box = crop_box_calculation(page_width,page_height,image,obj)            
                     cropped_image = crop_image(image, crop_box)
                     output_image_path = dest_loc + '/cropped_image_'+str(page_num) + str(obj["left"]) +'.png'
-                    save_image(cropped_image, output_image_path) 
-                    extacted_text = extract_text_from_image(cropped_image)
+                    save_image(cropped_image, output_image_path)
+                    if obj["type"]!='image': 
+                        extacted_text = extract_text_from_image(cropped_image)
+                    else :
+                        extacted_text = image_to_base64(cropped_image)
                     field={
                         'name':obj["name"],
-                        'text':extacted_text
+                        'text':extacted_text,
+                        'type':obj["type"]
                     }
                     page_fileds.append(field)
                     print("extracted image path " , extacted_text)
